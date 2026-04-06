@@ -72,6 +72,8 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    'training-nav-cards': TrainingNavCard;
+    'faq-items': FaqItem;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -94,6 +96,8 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'training-nav-cards': TrainingNavCardsSelect<false> | TrainingNavCardsSelect<true>;
+    'faq-items': FaqItemsSelect<false> | FaqItemsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -112,10 +116,16 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    navigation: Navigation;
+    'site-settings': SiteSetting;
+    'finance-your-training-page': FinanceYourTrainingPage;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    navigation: NavigationSelect<false> | NavigationSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'finance-your-training-page': FinanceYourTrainingPageSelect<false> | FinanceYourTrainingPageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -782,6 +792,49 @@ export interface Form {
   createdAt: string;
 }
 /**
+ * Training category navigation cards displayed on the Finance Your Training page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "training-nav-cards".
+ */
+export interface TrainingNavCard {
+  id: number;
+  _order?: string | null;
+  title: string;
+  description: string;
+  url: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * FAQ accordion items for the Finance Your Training page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-items".
+ */
+export interface FaqItem {
+  id: number;
+  _order?: string | null;
+  question: string;
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -990,6 +1043,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
+      } | null)
+    | ({
+        relationTo: 'training-nav-cards';
+        value: number | TrainingNavCard;
+      } | null)
+    | ({
+        relationTo: 'faq-items';
+        value: number | FaqItem;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1358,6 +1419,29 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "training-nav-cards_select".
+ */
+export interface TrainingNavCardsSelect<T extends boolean = true> {
+  _order?: T;
+  title?: T;
+  description?: T;
+  url?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-items_select".
+ */
+export interface FaqItemsSelect<T extends boolean = true> {
+  _order?: T;
+  question?: T;
+  answer?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -1637,6 +1721,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
+  logo?: (number | null) | Media;
   navItems?:
     | {
         link: {
@@ -1686,6 +1771,193 @@ export interface Footer {
         id?: string | null;
       }[]
     | null;
+  columns?:
+    | {
+        heading?: string | null;
+        links?:
+          | {
+              label: string;
+              url: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Set show to false to hide a platform without deleting its URL.
+   */
+  socialMedia?:
+    | {
+        platform: 'facebook' | 'twitter' | 'instagram' | 'pinterest' | 'tiktok';
+        url: string;
+        show?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * e.g. © 2025 Nikon School. All rights reserved.
+   */
+  copyrightText: string;
+  /**
+   * Privacy Notice, Terms of Use, Cookie Policy — in display order.
+   */
+  legalLinks?:
+    | {
+        label: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Global navigation — main nav items, country selector, utility bar (account/search/basket).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation".
+ */
+export interface Navigation {
+  id: number;
+  navItems?:
+    | {
+        label: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  countrySelector?: {
+    label?: string | null;
+    url?: string | null;
+  };
+  /**
+   * Account, Search, Basket icons — in display order. Upload an icon image and set the destination URL for each.
+   */
+  utilityBar?:
+    | {
+        /**
+         * Used as the accessible aria-label (not displayed).
+         */
+        label: string;
+        url: string;
+        /**
+         * Icon image displayed in the utility bar.
+         */
+        icon?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Global branding — site logo and homepage URL.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  logo: number | Media;
+  /**
+   * Destination URL when the logo is clicked (e.g. /)
+   */
+  homepageUrl: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * All content for the Finance Your Training page — hero, rich text blocks, badges, phone, contact URL.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "finance-your-training-page".
+ */
+export interface FinanceYourTrainingPage {
+  id: number;
+  heroTitle: string;
+  trainingNavSectionHeading: string;
+  nikonTrainingExplained: {
+    heading: string;
+    body: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+  };
+  qualiopiDatadock: {
+    heading: string;
+    body: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+  };
+  accompaniment: {
+    heading: string;
+    body: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+  };
+  /**
+   * Qualiopi and Datadock badges. Maximum 2. If URL is set, the badge becomes a clickable link.
+   */
+  certificationBadges?:
+    | {
+        image: number | Media;
+        altText: string;
+        /**
+         * If set, the badge image becomes a link to this URL (opens in new tab).
+         */
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  advisorContact: {
+    sectionHeading: string;
+    contactFormLabel: string;
+    phoneLabel: string;
+    /**
+     * Used as the tel: link target on mobile. Include country code (e.g. +33 1 23 45 67 89).
+     */
+    phoneNumber: string;
+    /**
+     * External URL for the pedagogical advisor contact form (opens in new tab).
+     */
+    contactFormUrl: string;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1694,6 +1966,7 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  logo?: T;
   navItems?:
     | T
     | {
@@ -1730,6 +2003,122 @@ export interface FooterSelect<T extends boolean = true> {
               label?: T;
             };
         id?: T;
+      };
+  columns?:
+    | T
+    | {
+        heading?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  socialMedia?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        show?: T;
+        id?: T;
+      };
+  copyrightText?: T;
+  legalLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation_select".
+ */
+export interface NavigationSelect<T extends boolean = true> {
+  navItems?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  countrySelector?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
+  utilityBar?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        icon?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  logo?: T;
+  homepageUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "finance-your-training-page_select".
+ */
+export interface FinanceYourTrainingPageSelect<T extends boolean = true> {
+  heroTitle?: T;
+  trainingNavSectionHeading?: T;
+  nikonTrainingExplained?:
+    | T
+    | {
+        heading?: T;
+        body?: T;
+      };
+  qualiopiDatadock?:
+    | T
+    | {
+        heading?: T;
+        body?: T;
+      };
+  accompaniment?:
+    | T
+    | {
+        heading?: T;
+        body?: T;
+      };
+  certificationBadges?:
+    | T
+    | {
+        image?: T;
+        altText?: T;
+        url?: T;
+        id?: T;
+      };
+  advisorContact?:
+    | T
+    | {
+        sectionHeading?: T;
+        contactFormLabel?: T;
+        phoneLabel?: T;
+        phoneNumber?: T;
+        contactFormUrl?: T;
       };
   updatedAt?: T;
   createdAt?: T;

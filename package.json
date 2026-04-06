@@ -5,9 +5,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "cross-env NODE_OPTIONS=--no-deprecation payload migrate && cross-env NODE_OPTIONS=--no-deprecation next build",
-    "postbuild": "next-sitemap --config next-sitemap.config.cjs",
-    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --no-server-fast-refresh",
+    "build": "cross-env NODE_OPTIONS=--no-deprecation NODE_TLS_REJECT_UNAUTHORIZED=0 DATABASE_URL=${POSTGRES_URL_NON_POOLING:-$DATABASE_URL} payload migrate && cross-env NODE_OPTIONS=--no-deprecation NODE_TLS_REJECT_UNAUTHORIZED=0 DATABASE_URL=${POSTGRES_URL_NON_POOLING:-$DATABASE_URL} next build",
+"dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --no-server-fast-refresh",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",

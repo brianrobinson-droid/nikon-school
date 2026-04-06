@@ -32,6 +32,7 @@ export const plugins: Plugin[] = [
     },
     token: process.env.BLOB_READ_WRITE_TOKEN ?? '',
     access: 'public',
+    addRandomSuffix: true,
   }),
   redirectsPlugin({
     collections: ['pages', 'posts'],

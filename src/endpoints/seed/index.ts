@@ -18,9 +18,14 @@ const collections: CollectionSlug[] = [
   'forms',
   'form-submissions',
   'search',
+  'training-nav-cards',
+  'faq-items',
 ]
 
-const globals: GlobalSlug[] = ['header', 'footer']
+// Note: navigation, site-settings, and finance-your-training-page globals are not reset here
+// because they have required fields that prevent empty-state resets. Clear them manually
+// in the admin panel if needed during development.
+const globals: Array<'header' | 'footer'> = ['header', 'footer']
 
 const categories = ['Technology', 'News', 'Finance', 'Design', 'Software', 'Engineering']
 
